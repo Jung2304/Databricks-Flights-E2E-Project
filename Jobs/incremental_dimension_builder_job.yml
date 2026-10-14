@@ -1,0 +1,29 @@
+resources:
+  jobs:
+    Dynamic_Dimension_Builder_Gold_Layer:
+      name: Dynamic_Dimension_Builder_Gold_Layer
+      tasks:
+        - task_key: Create_Parameters
+          notebook_task:
+            notebook_path: /Workspace/Users/minhdung38109141@gmail.com/Databricks-x-DBT-E2E-Project/gold/Create_Parameters
+            source: WORKSPACE
+        - task_key: Incremental_Dimension_Builder
+          depends_on:
+            - task_key: Create_Parameters
+          notebook_task:
+            notebook_path: /Workspace/Users/minhdung38109141@gmail.com/Databricks-x-DBT-E2E-Project/gold/Incremental_Data_Ingestion
+
+            # Dynamic Parameters
+            base_parameters:
+              source_schema: silver
+              source_table: passengers_silver_table
+              key_cols: '["passenger_id"]'
+              target_schema: gold
+              target_table: dim_passengers
+              backdated_refresh: ""
+              cdc_col: modifiedDate
+              surrogate_key: DimPassengersKey
+            source: WORKSPACE
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED

@@ -1,0 +1,34 @@
+{
+  "source_table": "flights_project.silver.bookings_silver_table",
+  "target_table": "fact_bookings",
+  "target_schema": "gold",
+  "cdc_col": "modifiedDate",
+  "primary_key": "booking_id",
+  "backdated_refresh": "",
+  "fact_columns": [
+    "booking_id",
+    "amount",
+    "booking_date",
+    "modifiedDate"
+  ],
+  "dimensions": [
+    {
+      "table": "flights_project.gold.dim_passengers",
+      "fact_join_col": "passenger_id",
+      "dimension_join_col": "passenger_id",
+      "surrogate_key": "DimPassengersKey"
+    },
+    {
+      "table": "flights_project.gold.dim_flights",
+      "fact_join_col": "flight_id",
+      "dimension_join_col": "flight_id",
+      "surrogate_key": "DimFlightsKey"
+    },
+    {
+      "table": "flights_project.gold.dim_airports",
+      "fact_join_col": "airport_id",
+      "dimension_join_col": "airport_id",
+      "surrogate_key": "DimAirportsKey"
+    }
+  ]
+}

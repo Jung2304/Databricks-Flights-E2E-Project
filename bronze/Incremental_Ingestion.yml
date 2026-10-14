@@ -1,0 +1,29 @@
+resources:
+  jobs:
+    Bronze_Silver_Pipeline:
+      name: Bronze_Silver_Pipeline
+      trigger:
+        pause_status: UNPAUSED
+        file_arrival:
+          url: /Volumes/flights_project/raw/raw_volume/raw_data/
+      tasks:
+        - task_key: Source_Params
+          notebook_task:
+            notebook_path: /Workspace/Users/minhdung38109141@gmail.com/Databricks-x-DBT-E2E-Project/bronze/Source_Parameters
+            source: WORKSPACE
+        - task_key: Incremental_Ingestion
+          depends_on:
+            - task_key: Source_Params
+          notebook_task:
+            notebook_path: /Workspace/Users/minhdung38109141@gmail.com/Databricks-x-DBT-E2E-Project/bronze/Bronze_Layer
+            base_parameters:
+              sources: "{{tasks.Source_Params.values.sources}}"
+            source: WORKSPACE
+        - task_key: DLT_Silver
+          depends_on:
+            - task_key: Incremental_Ingestion
+          pipeline_task:
+            pipeline_id: 87aeacdb-3672-4bdc-9690-09210e27acfb
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
